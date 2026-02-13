@@ -1,0 +1,21 @@
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "AmazonLexBotRole-AccountingBot",
+        "RoleId": "AROAVNX7HXUVQLLBJTPCJ",
+        "Arn": "arn:aws:iam::373123693867:role/AmazonLexBotRole-AccountingBot",
+        "CreateDate": "2026-02-13T01:55:50+00:00",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Service": "lexv2.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
+                }
+            ]
+        }
+    }
+}
