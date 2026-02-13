@@ -1,71 +1,125 @@
-# Getting Started with Create React App
+# AI Accounting Chatbot
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack AI-powered chatbot that answers accounting questions using AWS Lex V2, Amazon Bedrock, and a React frontend with a Node.js/Express backend.
 
-## Available Scripts
+## Tech Stack
 
-In the project directory, you can run:
+- **Frontend**: React
+- **Backend**: Node.js / Express
+- **AI/NLP**: AWS Lex V2 (QnAIntent)
+- **Knowledge Base**: Amazon Bedrock with RAG (Retrieval-Augmented Generation)
+- **Storage**: Amazon S3 (knowledge base documents)
+- **Auth**: AWS IAM (server-side credentials via AWS CLI)
 
-### `npm start`
+## Architecture
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+User (React frontend :3001)
+  → Express backend (:3000)
+    → AWS Lex V2
+      → Amazon Bedrock Knowledge Base
+        → S3 (accounting documents)
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+- Node.js >= 14
+- AWS CLI configured (`aws configure`)
+- AWS account with the following services enabled:
+  - Amazon Lex V2
+  - Amazon Bedrock
+  - Amazon S3
+  - AWS IAM
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### 1. Clone the repository
+```bash
+git clone https://github.com/YOUR_USERNAME/ai-accountant-bot.git
+cd ai-accountant-bot
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. Configure AWS credentials
+```bash
+aws configure
+```
+Enter your AWS Access Key ID, Secret Access Key, and region (`us-east-1`).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 4. Update AWS config
+Edit `awsConfig.js` with your Lex bot details:
+```javascript
+const AWS_CONFIG = {
+  region: 'us-east-1',
+  lexBotName: 'YOUR_BOT_ID',
+  lexBotAlias: 'TSTALIASID',
+  lexBotLocaleId: 'en_US',
+};
+```
 
-### `npm run eject`
+### 5. Run the backend
+```bash
+node server.js
+```
+Server runs on `http://localhost:3000`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 6. Run the frontend
+In a separate terminal:
+```bash
+npm start
+```
+App runs on `http://localhost:3001`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## AWS Resources
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| Resource | Details |
+|----------|---------|
+| Lex Bot | AccountingBot (Lex V2) |
+| Bot Alias | TSTALIASID (Draft) |
+| Bedrock Knowledge Base | Populated from S3 bucket |
+| IAM Role | Custom role with Bedrock + Lex permissions |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Testing the Bot via CLI
 
-## Learn More
+```bash
+aws lexv2-runtime recognize-text \
+  --bot-id YOUR_BOT_ID \
+  --bot-alias-id TSTALIASID \
+  --locale-id en_US \
+  --session-id test \
+  --text "What is accounting?" \
+  --region us-east-1
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## What This Demonstrates
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Full-stack application integrating AWS AI services
+- AWS Lex V2 with QnAIntent and Bedrock Knowledge Base
+- RAG (Retrieval-Augmented Generation) for contextual AI responses
+- Secure server-side AWS credential handling
+- REST API with Express proxying requests to AWS
+- React frontend consuming a custom backend API
 
-### Code Splitting
+## Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+ai-accountant-bot/
+├── src/
+│   └── App.js          # React frontend
+├── server
+|   └── Serever.js      # Express backend
+│   └── awsConfig.js
+├── package.json
+└── README.md
+```
 
-### Analyzing the Bundle Size
+## Cleanup
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# ai-accountant-bot
+To avoid AWS charges, remember to delete unused resources:
+- S3 bucket contents and bucket
+- Bedrock Knowledge Base
+- Lex bot
